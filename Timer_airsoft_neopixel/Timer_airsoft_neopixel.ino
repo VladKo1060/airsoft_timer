@@ -2,14 +2,17 @@
 #include "TM1637.h"
 #include <Adafruit_NeoPixel.h>
 
-#define buzzer_pin_timer_airsoft 8
-#define servo_pin_timer_airsoft 9
-#define password_strip_timer_airsoft 10
+#define CLK 2
+#define DIO 3
 
 #define but1_pin_timer_airsoft 4
 #define but2_pin_timer_airsoft 5
 #define but3_pin_timer_airsoft 6
 #define but4_pin_timer_airsoft 7
+
+#define buzzer_pin_timer_airsoft 8
+#define servo_pin_timer_airsoft 9
+#define password_strip_timer_airsoft 10
 
 #define drebezg_timer_airsoft 500
 
@@ -31,10 +34,6 @@
 
 #define light_timer_airsoft 50
 
-#define CLK 2
-#define DIO 3
-TM1637 tm1637(CLK, DIO);
-
 unsigned long time_ = 0;
 unsigned long time_boom = 10;
 
@@ -46,11 +45,13 @@ bool flag_timer = 0;
 
 short int ind_pass_prozes = 0;
 
+TM1637 tm1637(CLK, DIO);
 Servo boom;
 Adafruit_NeoPixel strip (4, password_strip_timer_airsoft, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   Serial.begin(9600);
+  
   boom.attach(servo_pin_timer_airsoft);
   boom.write(degrees_disconnect_contacts_timer_airsoft);
   
@@ -67,8 +68,9 @@ void setup() {
   pinMode(but4_pin_timer_airsoft, INPUT_PULLUP);
 
 
-  while (digitalRead(but1_pin_timer_airsoft)){
-    if (!digitalRead(but2_pin_timer_airsoft)){
+  print_disp(mili_to_int_minut(time_boom * 1000), 1);
+  while (digitalRead(but2_pin_timer_airsoft)){
+    if (!digitalRead(but1_pin_timer_airsoft)){
       time_boom += 1;
       print_disp(mili_to_int_minut(time_boom * 1000), 1);
       delay(drebezg_timer_airsoft);
@@ -80,6 +82,8 @@ void setup() {
     }
   }
   delay(drebezg_timer_airsoft);
+
+  print_disp(mili_to_int_minut(time_boom * 1000), 0);
 
 
   
